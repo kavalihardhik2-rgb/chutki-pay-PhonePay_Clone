@@ -382,6 +382,11 @@ button {
     color: var(--red);
 }
 
+.txn-amount.request {
+    color: var(--accent);
+    font-size: 0.8rem;
+}
+
 .empty-state {
     background-color: var(--surface);
     border-radius: var(--radius);
@@ -436,6 +441,7 @@ button {
     border-radius: var(--radius) var(--radius) 0 0;
     padding: 1.5rem 1.25rem;
     color: var(--text);
+    background-color: var(--surface);
 }
 
 .sheet::backdrop {
@@ -445,6 +451,12 @@ button {
 .sheet h2 {
     margin: 0 0 1rem;
     font-size: 1.2rem;
+}
+
+.sheet-copy {
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
 }
 
 .sheet label {
@@ -483,6 +495,10 @@ button {
     margin-top: 0.5rem;
 }
 
+.sheet-buttons.single-button {
+    grid-template-columns: 1fr;
+}
+
 .primary-btn,
 .secondary-btn {
     border: none;
@@ -513,6 +529,56 @@ button {
     border-radius: 100px;
     padding: 0.35rem 0.8rem;
     font-size: 0.85rem;
+}
+
+.view-list {
+    max-height: 45vh;
+    overflow-y: auto;
+}
+
+.offer-list {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.offer {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+}
+
+.offer span {
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.offer-btn {
+    justify-self: start;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+.offer-btn:disabled {
+    cursor: default;
+    opacity: 0.65;
+}
+
+.service-list {
+    display: grid;
+    gap: 0.6rem;
+}
+
+.service-btn {
+    width: 100%;
+    text-align: left;
+}
+
+.logout-btn {
+    width: 100%;
+    margin-top: 1rem;
 }
 
 /* ---------- Toast message ---------- */

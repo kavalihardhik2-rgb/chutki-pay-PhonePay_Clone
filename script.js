@@ -121,7 +121,7 @@ function renderTransactions() {
 
         const badge = document.createElement("span");
         badge.className = "txn-badge";
-        badge.textContent = txn.type === "credit" ? "↓" : "↑";
+        badge.textContent = txn.type === "credit" ? "↓" : txn.type === "request" ? "?" : "↑";
 
         const details = document.createElement("div");
         details.className = "txn-details";
@@ -136,7 +136,9 @@ function renderTransactions() {
 
         const amount = document.createElement("span");
         amount.className = "txn-amount " + txn.type;
-        amount.textContent = (txn.type === "credit" ? "+ " : "- ") + formatPaise(txn.amount);
+        amount.textContent = txn.type === "credit"
+            ? "+ " + formatPaise(txn.amount)
+            : txn.type === "request" ? "Requested " + formatPaise(txn.amount) : "- " + formatPaise(txn.amount);
 
         details.append(title, meta);
         row.append(badge, details, amount);
@@ -186,12 +188,43 @@ function addMoney(amountText) {
     return null;
 }
 
+function requestMoney(name, phone, amountText) {
+    const amount = rupeesToPaise(amountText);
+    if (name.trim().length < 2) return "Enter the person's name.";
+    if (!/^[6-9]\d{9}$/.test(phone)) return "Enter a valid 10-digit mobile number.";
+    if (amount === null) return "Enter an amount greater than zero.";
+
+    addTransaction("request", "Requested from " + name.trim(), amount);
+    saveState();
+    return null;
+}
+
+function payBill(service, reference, amountText, pin) {
+    const amount = rupeesToPaise(amountText);
+    if (reference.trim().length < 3) return "Enter a valid customer or account number.";
+    if (amount === null) return "Enter an amount greater than zero.";
+    if (amount > state.balance) return "Not enough balance. You have " + formatPaise(state.balance) + ".";
+    if (pin !== DEMO_PIN) return "Wrong PIN.";
+
+    state.balance -= amount;
+    addTransaction("debit", service + " · " + reference.trim(), amount);
+    saveState();
+    return null;
+}
+
 // ---------- 5. Wiring: connect buttons and forms to the actions ----------
 
 const sendDialog = document.getElementById("sendDialog");
 const addDialog = document.getElementById("addDialog");
+const requestDialog = document.getElementById("requestDialog");
+const billDialog = document.getElementById("billDialog");
+const qrDialog = document.getElementById("qrDialog");
+const viewDialog = document.getElementById("viewDialog");
 const sendForm = document.getElementById("sendForm");
 const addForm = document.getElementById("addForm");
+const requestForm = document.getElementById("requestForm");
+const billForm = document.getElementById("billForm");
+const qrForm = document.getElementById("qrForm");
 
 document.getElementById("openSendBtn").addEventListener("click", () => {
     sendForm.reset();
@@ -203,6 +236,18 @@ document.getElementById("openAddBtn").addEventListener("click", () => {
     addForm.reset();
     document.getElementById("addError").textContent = "";
     addDialog.showModal();
+});
+
+document.getElementById("openRequestBtn").addEventListener("click", () => {
+    requestForm.reset();
+    document.getElementById("requestError").textContent = "";
+    requestDialog.showModal();
+});
+
+document.getElementById("openQrBtn").addEventListener("click", () => {
+    qrForm.reset();
+    document.getElementById("qrError").textContent = "";
+    qrDialog.showModal();
 });
 
 // Any button with data-close shuts the dialog it sits in.
@@ -242,6 +287,72 @@ addForm.addEventListener("submit", (event) => {
     showToast("Money added to wallet");
 });
 
+requestForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const name = document.getElementById("requestName").value;
+    const error = requestMoney(
+        name,
+        document.getElementById("requestPhone").value,
+        document.getElementById("requestAmount").value
+    );
+    if (error) {
+        document.getElementById("requestError").textContent = error;
+        return;
+    }
+    requestDialog.close();
+    render();
+    showToast("Request sent to " + name.trim());
+});
+
+let selectedBill = "";
+document.querySelectorAll("[data-bill]").forEach((button) => {
+    button.addEventListener("click", () => {
+        selectedBill = button.dataset.bill;
+        document.getElementById("billTitle").textContent = selectedBill;
+        billForm.reset();
+        document.getElementById("billError").textContent = "";
+        billDialog.showModal();
+    });
+});
+
+document.getElementById("openMoreServicesBtn").addEventListener("click", () => {
+    showView("services");
+});
+
+billForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const error = payBill(
+        selectedBill,
+        document.getElementById("billReference").value,
+        document.getElementById("billAmount").value,
+        document.getElementById("billPin").value
+    );
+    if (error) {
+        document.getElementById("billError").textContent = error;
+        return;
+    }
+    billDialog.close();
+    render();
+    showToast(selectedBill + " paid successfully");
+});
+
+qrForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const id = document.getElementById("qrId").value.trim().toLowerCase();
+    if (!/^[a-z0-9._-]+@chutki$/.test(id)) {
+        document.getElementById("qrError").textContent = "Enter a valid Chutki ID, such as priya@chutki.";
+        return;
+    }
+    const recipient = id.split("@")[0].replace(/[._-]/g, " ");
+    document.getElementById("sendName").value = recipient.replace(/\b\w/g, (letter) => letter.toUpperCase());
+    document.getElementById("sendPhone").value = "";
+    document.getElementById("sendAmount").value = "";
+    document.getElementById("sendPin").value = "";
+    qrDialog.close();
+    document.getElementById("sendError").textContent = "";
+    sendDialog.showModal();
+});
+
 // Quick-amount chips fill the amount box.
 document.querySelectorAll(".chip").forEach((chip) => {
     chip.addEventListener("click", () => {
@@ -263,20 +374,103 @@ document.getElementById("resetBtn").addEventListener("click", () => {
     showToast("Demo data reset");
 });
 
-// Secondary screens are represented as safe demo feedback; no real service is called.
-document.querySelectorAll("[data-demo-action]").forEach((element) => {
+function showView(view) {
+    const content = document.getElementById("viewContent");
+    content.replaceChildren();
+    const heading = document.createElement("h2");
+    heading.textContent = view === "history"
+        ? "All transactions"
+        : view === "offers" ? "Offers" : view === "services" ? "More services" : "Profile";
+    content.append(heading);
+
+    if (view === "history") {
+        const history = document.createElement("ul");
+        history.className = "txn-list view-list";
+        for (const transaction of state.transactions) {
+            const row = document.createElement("li");
+            row.className = "txn";
+            const details = document.createElement("div");
+            details.className = "txn-details";
+            const title = document.createElement("p");
+            title.className = "txn-title";
+            title.textContent = transaction.title;
+            const meta = document.createElement("p");
+            meta.className = "txn-meta";
+            meta.textContent = formatTime(transaction.time);
+            details.append(title, meta);
+            const amount = document.createElement("span");
+            amount.className = "txn-amount " + transaction.type;
+            amount.textContent = transaction.type === "credit"
+                ? "+ " + formatPaise(transaction.amount)
+                : transaction.type === "request"
+                    ? "Requested " + formatPaise(transaction.amount)
+                    : "- " + formatPaise(transaction.amount);
+            row.append(details, amount);
+            history.append(row);
+        }
+        content.append(history);
+    } else if (view === "offers") {
+        const offers = document.createElement("div");
+        offers.className = "offer-list";
+        offers.innerHTML = `
+            <article class="offer"><strong>₹50 cashback</strong><span>On your next demo bill payment</span><button type="button" class="primary-btn offer-btn">Redeem</button></article>
+            <article class="offer"><strong>Zero demo fees</strong><span>Send money without extra charges</span><button type="button" class="primary-btn offer-btn">Redeem</button></article>
+            <article class="offer"><strong>Bonus ₹100</strong><span>Add money and get a demo bonus</span><button type="button" class="primary-btn offer-btn">Redeem</button></article>`;
+        offers.querySelectorAll(".offer-btn").forEach((button) => {
+            button.addEventListener("click", () => {
+                button.textContent = "Redeemed";
+                button.disabled = true;
+                showToast("Offer redeemed for this demo");
+            });
+        });
+        content.append(offers);
+    } else if (view === "services") {
+        const services = document.createElement("div");
+        services.className = "service-list";
+        services.innerHTML = ["Mobile recharge", "Electricity bill", "DTH recharge", "Water bill", "Gas booking", "Broadband bill", "Rent payment"]
+            .map((service) => `<button type="button" class="secondary-btn service-btn" data-service="${service}">${service}</button>`)
+            .join("");
+        services.querySelectorAll("[data-service]").forEach((button) => {
+            button.addEventListener("click", () => {
+                selectedBill = button.dataset.service;
+                document.getElementById("billTitle").textContent = selectedBill;
+                billForm.reset();
+                document.getElementById("billError").textContent = "";
+                viewDialog.close();
+                billDialog.showModal();
+            });
+        });
+        content.append(services);
+    } else {
+        const profile = document.createElement("div");
+        profile.className = "profile-details";
+        profile.innerHTML = "<p><strong>Hardhik</strong></p><p class=\"sheet-copy\">hardhik@chutki</p><p class=\"sheet-copy\">Demo account · No real payments</p>";
+        const logout = document.createElement("button");
+        logout.type = "button";
+        logout.className = "secondary-btn logout-btn";
+        logout.textContent = "Log out";
+        logout.addEventListener("click", logoutUser);
+        profile.append(logout);
+        content.append(profile);
+    }
+    viewDialog.showModal();
+}
+
+function logoutUser() {
+    localStorage.removeItem(AUTH_KEY);
+    viewDialog.close();
+    app.hidden = true;
+    loginScreen.hidden = false;
+    loginForm.reset();
+    showToast("You have been logged out");
+}
+
+document.querySelectorAll("[data-view]").forEach((element) => {
     element.addEventListener("click", (event) => {
         event.preventDefault();
-        const action = element.dataset.demoAction;
-        if (action === "Profile") {
-            localStorage.removeItem(AUTH_KEY);
-            app.hidden = true;
-            loginScreen.hidden = false;
-            loginForm.reset();
-            showToast("You have been logged out");
-            return;
-        }
-        showToast(action + " is available in this demo preview");
+        document.querySelectorAll(".bottom-nav a").forEach((link) => link.classList.remove("active"));
+        element.classList.add("active");
+        showView(element.dataset.view);
     });
 });
 

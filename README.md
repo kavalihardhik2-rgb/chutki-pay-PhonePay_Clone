@@ -16,7 +16,10 @@ Open `index.html` in a browser. To see the phone layout on a laptop, open DevToo
 - **Add money** with quick-amount chips.
 - **Transaction history** that updates after every action.
 - **Dark mode** with a theme toggle in the header. The choice is saved in `localStorage`.
-- **Demo service and navigation actions** with clear preview feedback rather than real bill, QR, offer or transfer services.
+- **Request money** with validation and a request entry in transaction history.
+- **QR scan demo** that accepts a Chutki ID and opens a pre-filled send-money flow.
+- **Bill payments** for mobile, electricity, DTH, water, gas, broadband and rent, with balance/PIN validation and transaction entries.
+- **History, Offers and Profile views** with transaction browsing, redeemable demo offers, more services and logout.
 - **Saved data**: balance, history, login and theme preferences stay after a refresh (stored in `localStorage`). Tap the avatar to reset wallet data; use Profile to log out.
 
 ## How the code is organised (`script.js`)
@@ -29,7 +32,7 @@ Open `index.html` in a browser. To see the phone layout on a laptop, open DevToo
 
 ## Demo limitations
 
-This project has no backend, authentication service, database or payment gateway. All login state, wallet changes and transactions are fake and stored only in this browser's `localStorage`. The service and navigation items are intentionally preview interactions; they do not call billers, scan a camera or transfer money.
+This project has no backend, authentication service, database or payment gateway. All login state, wallet changes and transactions are fake and stored only in this browser's `localStorage`. QR scanning is simulated with a Chutki ID input, and bill payments only update the local demo balance; they do not call billers or transfer real money.
 
 ## If this becomes a real product
 

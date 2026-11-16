@@ -63,11 +63,11 @@
                     <span class="action-icon">↗</span>
                     <span>Send</span>
                 </button>
-                <button class="action" data-demo-action="Request money">
+                <button class="action" id="openRequestBtn">
                     <span class="action-icon">↙</span>
                     <span>Request</span>
                 </button>
-                <button class="action" data-demo-action="Scan QR">
+                <button class="action" id="openQrBtn">
                     <span class="action-icon">▦</span>
                     <span>Scan QR</span>
                 </button>
@@ -81,14 +81,14 @@
             <section>
                 <h2>Recharge &amp; bills</h2>
                 <div class="bill-grid">
-                    <button class="bill" data-demo-action="Mobile recharge"><span class="bill-icon">📱</span>Mobile</button>
-                    <button class="bill" data-demo-action="Electricity bill"><span class="bill-icon">💡</span>Electricity</button>
-                    <button class="bill" data-demo-action="DTH recharge"><span class="bill-icon">📺</span>DTH</button>
-                    <button class="bill" data-demo-action="Water bill"><span class="bill-icon">🚰</span>Water</button>
-                    <button class="bill" data-demo-action="Gas booking"><span class="bill-icon">🔥</span>Gas</button>
-                    <button class="bill" data-demo-action="Broadband bill"><span class="bill-icon">🌐</span>Broadband</button>
-                    <button class="bill" data-demo-action="Rent payment"><span class="bill-icon">🏠</span>Rent</button>
-                    <button class="bill" data-demo-action="More services"><span class="bill-icon">⋯</span>More</button>
+                    <button class="bill" data-bill="Mobile recharge"><span class="bill-icon">📱</span>Mobile</button>
+                    <button class="bill" data-bill="Electricity bill"><span class="bill-icon">💡</span>Electricity</button>
+                    <button class="bill" data-bill="DTH recharge"><span class="bill-icon">📺</span>DTH</button>
+                    <button class="bill" data-bill="Water bill"><span class="bill-icon">🚰</span>Water</button>
+                    <button class="bill" data-bill="Gas booking"><span class="bill-icon">🔥</span>Gas</button>
+                    <button class="bill" data-bill="Broadband bill"><span class="bill-icon">🌐</span>Broadband</button>
+                    <button class="bill" data-bill="Rent payment"><span class="bill-icon">🏠</span>Rent</button>
+                    <button class="bill" id="openMoreServicesBtn"><span class="bill-icon">⋯</span>More</button>
                 </div>
             </section>
 
@@ -103,9 +103,9 @@
         <!-- Bottom navigation -->
         <nav class="bottom-nav" aria-label="Main">
             <a href="#" class="active"><span>⌂</span>Home</a>
-            <a href="#" data-demo-action="History"><span>≡</span>History</a>
-            <a href="#" data-demo-action="Offers"><span>✦</span>Offers</a>
-            <a href="#" data-demo-action="Profile"><span>☺</span>Profile</a>
+            <a href="#history" data-view="history"><span>≡</span>History</a>
+            <a href="#offers" data-view="offers"><span>✦</span>Offers</a>
+            <a href="#profile" data-view="profile"><span>☺</span>Profile</a>
         </nav>
     </div>
 
@@ -156,6 +156,65 @@
                 <button type="submit" class="primary-btn">Add</button>
             </div>
         </form>
+    </dialog>
+
+    <!-- Request money sheet -->
+    <dialog class="sheet" id="requestDialog">
+        <form id="requestForm" novalidate>
+            <h2>Request money</h2>
+            <label for="requestName">Request from</label>
+            <input id="requestName" type="text" placeholder="e.g. Priya">
+            <label for="requestPhone">Mobile number</label>
+            <input id="requestPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit number">
+            <label for="requestAmount">Amount (₹)</label>
+            <input id="requestAmount" type="number" min="1" step="0.01" placeholder="0.00">
+            <p class="form-error" id="requestError" role="alert"></p>
+            <div class="sheet-buttons">
+                <button type="button" class="secondary-btn" data-close>Cancel</button>
+                <button type="submit" class="primary-btn">Send request</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Bill payment sheet -->
+    <dialog class="sheet" id="billDialog">
+        <form id="billForm" novalidate>
+            <h2 id="billTitle">Pay a bill</h2>
+            <label for="billReference">Customer or account number</label>
+            <input id="billReference" type="text" placeholder="Enter reference number">
+            <label for="billAmount">Amount (₹)</label>
+            <input id="billAmount" type="number" min="1" step="0.01" placeholder="0.00">
+            <label for="billPin">4-digit PIN</label>
+            <input id="billPin" type="password" inputmode="numeric" maxlength="4" placeholder="Demo PIN is 1234">
+            <p class="form-error" id="billError" role="alert"></p>
+            <div class="sheet-buttons">
+                <button type="button" class="secondary-btn" data-close>Cancel</button>
+                <button type="submit" class="primary-btn">Pay bill</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- QR simulation sheet -->
+    <dialog class="sheet" id="qrDialog">
+        <form id="qrForm" novalidate>
+            <h2>Scan QR</h2>
+            <p class="sheet-copy">Demo scanner: enter a Chutki ID to continue to Send money.</p>
+            <label for="qrId">Chutki ID</label>
+            <input id="qrId" type="text" placeholder="e.g. priya@chutki">
+            <p class="form-error" id="qrError" role="alert"></p>
+            <div class="sheet-buttons">
+                <button type="button" class="secondary-btn" data-close>Cancel</button>
+                <button type="submit" class="primary-btn">Scan</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- History, offers and profile views -->
+    <dialog class="sheet" id="viewDialog">
+        <div id="viewContent"></div>
+        <div class="sheet-buttons single-button">
+            <button type="button" class="primary-btn" data-close>Close</button>
+        </div>
     </dialog>
 
     <div class="toast" id="toast" role="status"></div>
