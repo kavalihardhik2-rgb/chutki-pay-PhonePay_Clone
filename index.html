@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chutki Pay - demo wallet</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div class="app">
+
+        <!-- Top bar -->
+        <header class="top-bar">
+            <div>
+                <p class="greeting">Good evening,</p>
+                <h1 class="user-name">Nauman</h1>
+            </div>
+            <button class="avatar" id="resetBtn" title="Reset demo data" aria-label="Reset demo data">N</button>
+        </header>
+
+        <p class="demo-banner">Demo project. No real money moves here.</p>
+
+        <main>
+            <!-- Balance card -->
+            <section class="balance-card" aria-label="Wallet balance">
+                <p class="balance-label">Wallet balance</p>
+                <div class="balance-row">
+                    <p class="balance-amount" id="balanceAmount">₹0.00</p>
+                    <button class="ghost-btn" id="toggleBalanceBtn">Hide</button>
+                </div>
+                <p class="wallet-id">chutki ID: nauman@chutki</p>
+            </section>
+
+            <!-- Quick actions -->
+            <section class="quick-actions" aria-label="Quick actions">
+                <button class="action" id="openSendBtn">
+                    <span class="action-icon">↗</span>
+                    <span>Send</span>
+                </button>
+                <button class="action" data-todo="Request money">
+                    <span class="action-icon">↙</span>
+                    <span>Request</span>
+                </button>
+                <button class="action" data-todo="Scan QR">
+                    <span class="action-icon">▦</span>
+                    <span>Scan QR</span>
+                </button>
+                <button class="action" id="openAddBtn">
+                    <span class="action-icon">＋</span>
+                    <span>Add money</span>
+                </button>
+            </section>
+
+            <!-- Recharge and bills -->
+            <section>
+                <h2>Recharge &amp; bills</h2>
+                <div class="bill-grid">
+                    <button class="bill" data-todo="Mobile recharge"><span class="bill-icon">📱</span>Mobile</button>
+                    <button class="bill" data-todo="Electricity bill"><span class="bill-icon">💡</span>Electricity</button>
+                    <button class="bill" data-todo="DTH recharge"><span class="bill-icon">📺</span>DTH</button>
+                    <button class="bill" data-todo="Water bill"><span class="bill-icon">🚰</span>Water</button>
+                    <button class="bill" data-todo="Gas booking"><span class="bill-icon">🔥</span>Gas</button>
+                    <button class="bill" data-todo="Broadband bill"><span class="bill-icon">🌐</span>Broadband</button>
+                    <button class="bill" data-todo="Rent payment"><span class="bill-icon">🏠</span>Rent</button>
+                    <button class="bill" data-todo="More services"><span class="bill-icon">⋯</span>More</button>
+                </div>
+            </section>
+
+            <!-- Transactions -->
+            <section>
+                <h2>Recent transactions</h2>
+                <ul class="txn-list" id="txnList"></ul>
+                <p class="empty-state" id="emptyState" hidden>No transactions yet. Send or add money to see them here.</p>
+            </section>
+        </main>
+
+        <!-- Bottom navigation -->
+        <nav class="bottom-nav" aria-label="Main">
+            <a href="#" class="active"><span>⌂</span>Home</a>
+            <a href="#" data-todo="History page"><span>≡</span>History</a>
+            <a href="#" data-todo="Offers page"><span>✦</span>Offers</a>
+            <a href="#" data-todo="Profile page"><span>☺</span>Profile</a>
+        </nav>
+    </div>
+
+    <!-- Send money sheet -->
+    <dialog class="sheet" id="sendDialog">
+        <form id="sendForm" novalidate>
+            <h2>Send money</h2>
+
+            <label for="sendName">Recipient name</label>
+            <input id="sendName" type="text" placeholder="e.g. Hardhik" autocomplete="off">
+
+            <label for="sendPhone">Mobile number</label>
+            <input id="sendPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit number">
+
+            <label for="sendAmount">Amount (₹)</label>
+            <input id="sendAmount" type="number" min="1" step="0.01" placeholder="0.00">
+
+            <label for="sendPin">4-digit PIN</label>
+            <input id="sendPin" type="password" inputmode="numeric" maxlength="4" placeholder="Demo PIN is 1234">
+
+            <p class="form-error" id="sendError" role="alert"></p>
+
+            <div class="sheet-buttons">
+                <button type="button" class="secondary-btn" data-close>Cancel</button>
+                <button type="submit" class="primary-btn">Pay</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Add money sheet -->
+    <dialog class="sheet" id="addDialog">
+        <form id="addForm" novalidate>
+            <h2>Add money</h2>
+
+            <label for="addAmount">Amount (₹)</label>
+            <input id="addAmount" type="number" min="1" step="0.01" placeholder="0.00">
+
+            <div class="chips">
+                <button type="button" class="chip" data-amount="100">+ ₹100</button>
+                <button type="button" class="chip" data-amount="500">+ ₹500</button>
+                <button type="button" class="chip" data-amount="1000">+ ₹1,000</button>
+            </div>
+
+            <p class="form-error" id="addError" role="alert"></p>
+
+            <div class="sheet-buttons">
+                <button type="button" class="secondary-btn" data-close>Cancel</button>
+                <button type="submit" class="primary-btn">Add</button>
+            </div>
+        </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <script src="./script.js"></script>
+</body>
+
+</html>
