@@ -6,6 +6,8 @@
 // 0.1 + 0.2 is not exactly 0.3 in JavaScript, so decimals are unsafe for money.
 
 const STORAGE_KEY = "chutkiPayState";
+const AUTH_KEY = "chutkiPayLoggedIn";
+const THEME_KEY = "chutkiPayTheme";
 const DEMO_PIN = "1234";
 
 const defaultState = {
@@ -37,6 +39,34 @@ function saveState() {
 }
 
 let state = loadState();
+
+const loginScreen = document.getElementById("loginScreen");
+const app = document.querySelector(".app");
+const loginForm = document.getElementById("loginForm");
+const loginError = document.getElementById("loginError");
+
+function isLoggedIn() {
+    return localStorage.getItem(AUTH_KEY) === "true";
+}
+
+function showWallet() {
+    loginScreen.hidden = true;
+    app.hidden = false;
+}
+
+function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    document.body.dataset.theme = theme;
+    const toggle = document.getElementById("themeToggle");
+    toggle.textContent = theme === "dark" ? "☀" : "☾";
+    toggle.title = theme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+    toggle.setAttribute("aria-label", toggle.title);
+}
+
+function loadTheme() {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    applyTheme(savedTheme === "dark" ? "dark" : "light");
+}
 
 // ---------- 2. Helpers ----------
 
@@ -233,12 +263,58 @@ document.getElementById("resetBtn").addEventListener("click", () => {
     showToast("Demo data reset");
 });
 
-// Features that are not built yet. Each one is an exercise for you.
-document.querySelectorAll("[data-todo]").forEach((element) => {
+// Secondary screens are represented as safe demo feedback; no real service is called.
+document.querySelectorAll("[data-demo-action]").forEach((element) => {
     element.addEventListener("click", (event) => {
         event.preventDefault();
-        showToast(element.dataset.todo + " is not built yet");
+        const action = element.dataset.demoAction;
+        if (action === "Profile") {
+            localStorage.removeItem(AUTH_KEY);
+            app.hidden = true;
+            loginScreen.hidden = false;
+            loginForm.reset();
+            showToast("You have been logged out");
+            return;
+        }
+        showToast(action + " is available in this demo preview");
     });
 });
 
+loginForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const name = document.getElementById("loginName").value.trim();
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    if (name.length < 2) {
+        loginError.textContent = "Enter your name to continue.";
+        return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        loginError.textContent = "Enter a valid email address.";
+        return;
+    }
+    if (password.length === 0) {
+        loginError.textContent = "Enter a demo password to continue.";
+        return;
+    }
+
+    localStorage.setItem(AUTH_KEY, "true");
+    loginError.textContent = "";
+    showWallet();
+    showToast("Welcome to Chutki Pay, " + name);
+});
+
+document.getElementById("themeToggle").addEventListener("click", () => {
+    const theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    localStorage.setItem(THEME_KEY, theme);
+    applyTheme(theme);
+});
+
+loadTheme();
+if (isLoggedIn()) {
+    showWallet();
+} else {
+    app.hidden = true;
+}
 render();

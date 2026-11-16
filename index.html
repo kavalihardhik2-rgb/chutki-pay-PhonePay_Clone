@@ -9,15 +9,39 @@
 </head>
 
 <body>
+    <section class="login-screen" id="loginScreen" aria-labelledby="loginTitle">
+        <div class="login-card">
+            <div class="login-brand">C</div>
+            <p class="eyebrow">Welcome to</p>
+            <h1 id="loginTitle">Chutki Pay</h1>
+            <p class="login-copy">A safe, front-end-only wallet demo. No real money is transferred.</p>
+            <form id="loginForm" novalidate>
+                <label for="loginName">Your name</label>
+                <input id="loginName" type="text" placeholder="e.g. Hardhik" autocomplete="name" required>
+                <label for="loginEmail">Email address</label>
+                <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email" required>
+                <label for="loginPassword">Demo password</label>
+                <input id="loginPassword" type="password" placeholder="Use any password" autocomplete="current-password"
+                    required>
+                <p class="form-error" id="loginError" role="alert"></p>
+                <button type="submit" class="primary-btn login-btn">Enter demo wallet</button>
+            </form>
+            <p class="login-hint">Use any valid name, email and password to continue.</p>
+        </div>
+    </section>
+
     <div class="app">
 
         <!-- Top bar -->
         <header class="top-bar">
             <div>
                 <p class="greeting">Good evening,</p>
-                <h1 class="user-name">Nauman</h1>
+                <h1 class="user-name">Hardhik</h1>
             </div>
-            <button class="avatar" id="resetBtn" title="Reset demo data" aria-label="Reset demo data">N</button>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">☾</button>
+                <button class="avatar" id="resetBtn" title="Reset demo data" aria-label="Reset demo data">H</button>
+            </div>
         </header>
 
         <p class="demo-banner">Demo project. No real money moves here.</p>
@@ -30,7 +54,7 @@
                     <p class="balance-amount" id="balanceAmount">₹0.00</p>
                     <button class="ghost-btn" id="toggleBalanceBtn">Hide</button>
                 </div>
-                <p class="wallet-id">chutki ID: nauman@chutki</p>
+                <p class="wallet-id">chutki ID: hardhik@chutki</p>
             </section>
 
             <!-- Quick actions -->
@@ -39,11 +63,11 @@
                     <span class="action-icon">↗</span>
                     <span>Send</span>
                 </button>
-                <button class="action" data-todo="Request money">
+                <button class="action" data-demo-action="Request money">
                     <span class="action-icon">↙</span>
                     <span>Request</span>
                 </button>
-                <button class="action" data-todo="Scan QR">
+                <button class="action" data-demo-action="Scan QR">
                     <span class="action-icon">▦</span>
                     <span>Scan QR</span>
                 </button>
@@ -57,14 +81,14 @@
             <section>
                 <h2>Recharge &amp; bills</h2>
                 <div class="bill-grid">
-                    <button class="bill" data-todo="Mobile recharge"><span class="bill-icon">📱</span>Mobile</button>
-                    <button class="bill" data-todo="Electricity bill"><span class="bill-icon">💡</span>Electricity</button>
-                    <button class="bill" data-todo="DTH recharge"><span class="bill-icon">📺</span>DTH</button>
-                    <button class="bill" data-todo="Water bill"><span class="bill-icon">🚰</span>Water</button>
-                    <button class="bill" data-todo="Gas booking"><span class="bill-icon">🔥</span>Gas</button>
-                    <button class="bill" data-todo="Broadband bill"><span class="bill-icon">🌐</span>Broadband</button>
-                    <button class="bill" data-todo="Rent payment"><span class="bill-icon">🏠</span>Rent</button>
-                    <button class="bill" data-todo="More services"><span class="bill-icon">⋯</span>More</button>
+                    <button class="bill" data-demo-action="Mobile recharge"><span class="bill-icon">📱</span>Mobile</button>
+                    <button class="bill" data-demo-action="Electricity bill"><span class="bill-icon">💡</span>Electricity</button>
+                    <button class="bill" data-demo-action="DTH recharge"><span class="bill-icon">📺</span>DTH</button>
+                    <button class="bill" data-demo-action="Water bill"><span class="bill-icon">🚰</span>Water</button>
+                    <button class="bill" data-demo-action="Gas booking"><span class="bill-icon">🔥</span>Gas</button>
+                    <button class="bill" data-demo-action="Broadband bill"><span class="bill-icon">🌐</span>Broadband</button>
+                    <button class="bill" data-demo-action="Rent payment"><span class="bill-icon">🏠</span>Rent</button>
+                    <button class="bill" data-demo-action="More services"><span class="bill-icon">⋯</span>More</button>
                 </div>
             </section>
 
@@ -79,9 +103,9 @@
         <!-- Bottom navigation -->
         <nav class="bottom-nav" aria-label="Main">
             <a href="#" class="active"><span>⌂</span>Home</a>
-            <a href="#" data-todo="History page"><span>≡</span>History</a>
-            <a href="#" data-todo="Offers page"><span>✦</span>Offers</a>
-            <a href="#" data-todo="Profile page"><span>☺</span>Profile</a>
+            <a href="#" data-demo-action="History"><span>≡</span>History</a>
+            <a href="#" data-demo-action="Offers"><span>✦</span>Offers</a>
+            <a href="#" data-demo-action="Profile"><span>☺</span>Profile</a>
         </nav>
     </div>
 

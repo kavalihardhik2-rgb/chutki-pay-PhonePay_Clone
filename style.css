@@ -14,6 +14,16 @@
     --nav-height: 4rem;
 }
 
+[data-theme="dark"] {
+    --bg: #111918;
+    --surface: #1b2725;
+    --text: #edf5f2;
+    --muted: #9eb0ab;
+    --border: #30413d;
+    --green: #4ade80;
+    --red: #f87171;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -23,6 +33,10 @@ body {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background-color: #dfe5e3;
     color: var(--text);
+}
+
+body[data-theme="dark"] {
+    background-color: #0b1110;
 }
 
 h1,
@@ -43,6 +57,95 @@ input {
 
 button {
     cursor: pointer;
+}
+
+/* ---------- Login gate ---------- */
+.login-screen {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 1.25rem;
+    background: radial-gradient(circle at top, #d6f1e9, #dfe5e3 55%);
+}
+
+.login-card {
+    width: min(100%, 390px);
+    padding: 2rem;
+    border-radius: 1.25rem;
+    background-color: var(--surface);
+    box-shadow: 0 1rem 3rem rgba(15, 59, 52, 0.14);
+}
+
+.login-brand {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 1rem;
+    margin-bottom: 1.25rem;
+    background: var(--brand);
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.eyebrow {
+    color: var(--brand);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.login-card h1 {
+    margin: 0.25rem 0 0.5rem;
+}
+
+.login-copy,
+.login-hint {
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.login-card form {
+    margin-top: 1.5rem;
+}
+
+.login-card label {
+    display: block;
+    margin: 0.8rem 0 0.3rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 0.75rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    background-color: var(--surface);
+    color: var(--text);
+}
+
+.login-card input:focus {
+    outline: 2px solid var(--brand);
+    border-color: transparent;
+}
+
+.login-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.login-hint {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.login-screen[hidden],
+.app[hidden] {
+    display: none;
 }
 
 /* ---------- App shell: phone-first, centred column on bigger screens ---------- */
@@ -78,6 +181,22 @@ button {
     background-color: var(--accent);
     color: #fff;
     font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.theme-toggle {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--text);
     font-size: 1.1rem;
 }
 
@@ -341,6 +460,8 @@ button {
     border: 1px solid var(--border);
     border-radius: 0.6rem;
     font-size: 1rem;
+    background-color: var(--surface);
+    color: var(--text);
 }
 
 .sheet input:focus {
